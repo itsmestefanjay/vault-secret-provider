@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1m23yio" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:collaboration id="Collaboration_06uxwlx">
+    <bpmn:participant id="Participant_123krbu" name="Business Stuff" processRef="Process_01zrl1g" />
+    <bpmn:participant id="Participant_1gx1zz9" name="Secret Service" />
+    <bpmn:messageFlow id="Flow_1u70wl9" sourceRef="worker-secret" targetRef="Participant_1gx1zz9" />
+    <bpmn:messageFlow id="Flow_1l46sat" sourceRef="connector-secret" targetRef="Participant_1gx1zz9" />
+    <bpmn:textAnnotation id="TextAnnotation_0icba0n">
+      <bpmn:text>uses custom secret provider</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_163y7ur">
+      <bpmn:text>uses secret service</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_01zrl1g" name="Secrets Test" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0v326eh</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="connector-secret" name="connector secret" zeebe:modelerTemplate="com.consid.bpm.SecretTestConnector">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="com.consid.bpm:secret-test:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="{{ secrets.apiKey }}" target="authentication.secret" />
+          <zeebe:input source="John" target="name" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0v326eh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yqyyux</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_18dh2dj">
+      <bpmn:incoming>Flow_1gg1yka</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="worker-secret" name="job worker secret">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="doStuff" retries="1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;Frank&#34;" target="name" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yqyyux</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gg1yka</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0v326eh" sourceRef="StartEvent_1" targetRef="connector-secret" />
+    <bpmn:sequenceFlow id="Flow_0yqyyux" sourceRef="connector-secret" targetRef="worker-secret" />
+    <bpmn:sequenceFlow id="Flow_1gg1yka" sourceRef="worker-secret" targetRef="Event_18dh2dj" />
+    <bpmn:association id="Association_0it122b" associationDirection="None" sourceRef="connector-secret" targetRef="TextAnnotation_0icba0n" />
+    <bpmn:association id="Association_1rhu87h" associationDirection="None" sourceRef="worker-secret" targetRef="TextAnnotation_163y7ur" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_06uxwlx">
+      <bpmndi:BPMNShape id="Participant_123krbu_di" bpmnElement="Participant_123krbu" isHorizontal="true">
+        <dc:Bounds x="129" y="50" width="600" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pkcxdo_di" bpmnElement="connector-secret">
+        <dc:Bounds x="270" y="167" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18dh2dj_di" bpmnElement="Event_18dh2dj">
+        <dc:Bounds x="582" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c43wle_di" bpmnElement="worker-secret">
+        <dc:Bounds x="410" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0it122b_di" bpmnElement="Association_0it122b">
+        <di:waypoint x="343" y="167" />
+        <di:waypoint x="375" y="111" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1rhu87h_di" bpmnElement="Association_1rhu87h">
+        <di:waypoint x="493" y="167" />
+        <di:waypoint x="539" y="111" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v326eh_di" bpmnElement="Flow_0v326eh">
+        <di:waypoint x="215" y="207" />
+        <di:waypoint x="270" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yqyyux_di" bpmnElement="Flow_0yqyyux">
+        <di:waypoint x="370" y="207" />
+        <di:waypoint x="410" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gg1yka_di" bpmnElement="Flow_1gg1yka">
+        <di:waypoint x="510" y="207" />
+        <di:waypoint x="582" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_19ifqan_di" bpmnElement="Participant_1gx1zz9" isHorizontal="true">
+        <dc:Bounds x="129" y="350" width="600" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0icba0n_di" bpmnElement="TextAnnotation_0icba0n">
+        <dc:Bounds x="340" y="70" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_163y7ur_di" bpmnElement="TextAnnotation_163y7ur">
+        <dc:Bounds x="510" y="70" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1u70wl9_di" bpmnElement="Flow_1u70wl9">
+        <di:waypoint x="460" y="247" />
+        <di:waypoint x="460" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l46sat_di" bpmnElement="Flow_1l46sat">
+        <di:waypoint x="320" y="247" />
+        <di:waypoint x="320" y="350" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

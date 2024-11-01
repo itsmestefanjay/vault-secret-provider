@@ -1,0 +1,17 @@
+vault:
+  host: http://localhost
+  port: 8200
+  token: 0000-0000-0000-0000
+  backend: secret
+  path: "${spring.application.name}"
+
+zeebe.client:
+  cloud:
+    region: ""
+    clusterId: ""
+    clientId: ""
+    clientSecret: ""
+
+spring:
+  application:
+    name: custom-secret-provider
