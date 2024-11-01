@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.consid.bpm.camunda</groupId>
-    <artifactId>hasicorp-secret-provider</artifactId>
+    <artifactId>vault-secret-provider</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>hasicorp-secret-provider</name>
-    <description>a custom camunda secret-provider for hashicorp vault</description>
+    <name>vault-secret-provider</name>
+    <description>A custom camunda secret-provider for hashicorp vault</description>
     <url/>
     <licenses>
         <license/>
