@@ -22,7 +22,6 @@ public class GenericKeyValueVaultSecretService implements VaultSecretService {
         this.vaultTemplate = vaultTemplate;
         this.path = path;
         this.backend = backend;
-        log.info("Initializing generic key value backend '{}' for vault", backend);
     }
 
     @Override
@@ -39,7 +38,7 @@ public class GenericKeyValueVaultSecretService implements VaultSecretService {
     private Map<String, Object> readSecretsFromPath() {
         try {
             // secrets are read from v1 api from backend/path (no data segment)
-            VaultResponse response = vaultTemplate.read(backend + "/" + path);
+            var response = vaultTemplate.read(backend + "/" + path);
             if (response != null) {
                 return response.getRequiredData();
             }

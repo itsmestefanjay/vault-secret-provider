@@ -1,5 +1,6 @@
 package com.consid.bpm.camunda.secrets.provider;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -17,13 +18,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 class VaultSecretProviderTest {
 
     @Mock
-    VaultSecretService secretService;
+    private VaultSecretService secretService;
+    private VaultSecretProvider provider;
+
+    @BeforeEach
+    public void setUp() {
+        provider = new VaultSecretProvider(secretService);
+    }
 
     @Test
     public void test_secrets_retrieved_as_expected() {
         // given
         Mockito.when(secretService.getSecretsFromVault()).thenReturn(Map.of("apiKey", "1234-5678-9012-3456"));
-        VaultSecretProvider provider = new VaultSecretProvider(secretService);
 
         // when
         String apiKey = provider.getSecret("apiKey");
@@ -36,7 +42,6 @@ class VaultSecretProviderTest {
     public void test_secrets_cached_as_expected() {
         // given
         Mockito.when(secretService.getSecretsFromVault()).thenReturn(Map.of("apiKey", "1234-5678-9012-3456"));
-        VaultSecretProvider provider = new VaultSecretProvider(secretService);
 
         // when
         String apiKey = provider.getSecret("apiKey");
@@ -52,7 +57,6 @@ class VaultSecretProviderTest {
     public void test_unknown_secrets_return_null_as_expected() {
         // given
         Mockito.when(secretService.getSecretsFromVault()).thenReturn(Collections.emptyMap());
-        VaultSecretProvider provider = new VaultSecretProvider(secretService);
 
         // when
         String apiKey = provider.getSecret("unknown");

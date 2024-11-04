@@ -5,15 +5,18 @@ import com.consid.bpm.camunda.secrets.provider.VaultSecretService;
 import com.consid.bpm.camunda.secrets.provider.kv.GenericKeyValueVaultSecretService;
 import com.consid.bpm.camunda.secrets.provider.kv.VersionedKeyValueVaultSecretService;
 import com.consid.bpm.camunda.secrets.worker.CustomJobWorker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.vault.authentication.TokenAuthentication;
 import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
+import org.springframework.vault.core.VaultVersionedKeyValueTemplate;
 
 import java.net.URI;
 
+@Slf4j
 @Configuration
 public class ProviderAppConfig {
 
@@ -29,7 +32,7 @@ public class ProviderAppConfig {
 
     @Bean
     public VaultTemplate vaultTemplate(VaultConfigurationProperties properties) {
-        URI endpoint = URI.create(String.format("%s:%d", properties.getHost(), properties.getPort()));
+        var endpoint = URI.create(String.format("%s:%d", properties.getHost(), properties.getPort()));
         return new VaultTemplate(VaultEndpoint.from(endpoint), new TokenAuthentication(properties.getToken()));
     }
 
@@ -39,6 +42,7 @@ public class ProviderAppConfig {
             VaultTemplate vaultTemplate,
             VaultConfigurationProperties properties
     ) {
+        log.info("Initializing generic key value backend '{}' for vault", properties.getBackend());
         return new GenericKeyValueVaultSecretService(vaultTemplate, properties.getPath(), properties.getBackend());
     }
 
@@ -48,7 +52,9 @@ public class ProviderAppConfig {
             VaultTemplate vaultTemplate,
             VaultConfigurationProperties properties
     ) {
-        return new VersionedKeyValueVaultSecretService(vaultTemplate, properties.getPath(), properties.getBackend(), properties.getSecretVersion());
+        log.info("Initializing versioned key value backend '{}' for vault", properties.getBackend());
+        var versionedTemplate = new VaultVersionedKeyValueTemplate(vaultTemplate, properties.getBackend());
+        return new VersionedKeyValueVaultSecretService(versionedTemplate, properties.getPath(), properties.getSecretVersion());
     }
 
 }

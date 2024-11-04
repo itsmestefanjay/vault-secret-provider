@@ -3,7 +3,6 @@ package com.consid.bpm.camunda.secrets.provider.kv;
 import com.consid.bpm.camunda.secrets.provider.VaultSecretService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.core.VaultVersionedKeyValueTemplate;
 import org.springframework.vault.support.Versioned;
 
@@ -18,11 +17,10 @@ public class VersionedKeyValueVaultSecretService implements VaultSecretService {
     private final String path;
     private final int version;
 
-    public VersionedKeyValueVaultSecretService(VaultTemplate vaultVTemplate, String path, String backend, int version) {
+    public VersionedKeyValueVaultSecretService(VaultVersionedKeyValueTemplate vaultTemplate, String path, int version) {
         this.path = path;
         this.version = version;
-        this.vaultTemplate = new VaultVersionedKeyValueTemplate(vaultVTemplate, backend);
-        log.info("Initializing versioned key value backend '{}' for vault", backend);
+        this.vaultTemplate = vaultTemplate;
     }
 
 
@@ -33,14 +31,14 @@ public class VersionedKeyValueVaultSecretService implements VaultSecretService {
 
     @Override
     public Optional<Object> getSecretByKey(String key) {
-        Map<String, Object> secrets = readSecretsFromVault();
+        var secrets = readSecretsFromVault();
         return Optional.ofNullable(secrets.get(key));
     }
 
     private Map<String, Object> readSecretsFromVault() {
         try {
             // secrets are read from v2 api from backend/data/path
-            Versioned<Map<String, Object>> secrets = vaultTemplate.get(path, Versioned.Version.from(version));
+            var secrets = vaultTemplate.get(path, Versioned.Version.from(version));
             if (secrets != null) {
                 return secrets.getRequiredData();
             }
