@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.vault.core.VaultVersionedKeyValueTemplate;
 import org.springframework.vault.support.Versioned;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,6 +46,6 @@ public class VersionedKeyValueVaultSecretService implements VaultSecretService {
         } catch (IllegalStateException e) {
             log.debug("Cannot find secrets in path {}", path);
         }
-        return Map.of();
+        return Collections.emptyMap();
     }
 }

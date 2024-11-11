@@ -4,7 +4,6 @@ import com.consid.bpm.camunda.secrets.provider.VaultSecretService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.vault.core.VaultTemplate;
-import org.springframework.vault.support.VaultResponse;
 
 import java.util.Collections;
 import java.util.Map;
