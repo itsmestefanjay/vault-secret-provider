@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <connectors.version>8.6.2</connectors.version>
+        <connectors.version>8.6.5</connectors.version>
         <lombok.version>1.18.36</lombok.version>
         <spring-vault.version>3.1.2</spring-vault.version>
     </properties>
